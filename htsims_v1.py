@@ -107,7 +107,7 @@ def rad_coeff(e1, e2, a1, a2, vf):
 # All constants are defined here for clarity and easy modification.
 
 # Masses (kg)
-m_B_total = 64.8
+m_B_total = 32.4
 m_Bf = m_Bm = m_Br = m_B_total / 3  # Battery mass distributed across 3 nodes
 m_ESC = 0.12
 m_TS  = 0.9
@@ -120,7 +120,7 @@ C_TS  = 1040
 C_BS  = 1040
 
 # Internal Heat Generation (W)
-Q_B_total = 232.8
+Q_B_total = 12.6
 Q_B_front = Q_B_middle = Q_B_rear = Q_B_total / 3
 Q_ESC = 100
 Q_S = 0  # Solar heat load
@@ -149,7 +149,7 @@ C_Bf_ESC_rad = rad_coeff(0.2, 0.8, 0.038808, 0.00206415, 1)
 LC_B_horiz = 0.277; LC_B_vert = 0.252; LC_ESC = 0.0695; LC_TS = LC_BS = 0.84
 
 # Mounting Conduction (e.g., ESC to battery mount)
-k_mount = 0.0001; A_contact = 0.005; L_mount = 0.005
+k_mount = 3; A_contact = 0.005; L_mount = 0.005
 C_ESC_Bf_cond = k_mount * A_contact / L_mount # Conduction coeff (W/K)
 
 # Skin Conduction (internal to external shell surface)
@@ -159,7 +159,7 @@ C_cond_cfrp = k_cfrp * A_cfrp / t_cfrp # Conduction coeff (W/K)
 # Environmental Conditions
 g = 9.81         # Gravitational acceleration (m/s^2)
 velocity = 0.0     # External air velocity (m/s)
-T_E = 298     # Ambient external temperature (K)
+T_E = 193.15     # Ambient external temperature (K)
 
 # -------------------------
 # 5. Define Convection Models (NEW - Based on Incropera & DeWitt)
@@ -337,7 +337,7 @@ print("Initial Temperatures (K):", x0)
 
 # Simulation time span
 t0 = 0
-T_total = 3000000  # Total simulation time in seconds
+T_total = 10000  # Total simulation time in seconds
 
 # --- Progress Monitor for the Solver ---
 # This class provides feedback during long simulations.

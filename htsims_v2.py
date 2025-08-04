@@ -58,20 +58,20 @@ def rad_coeff(e1, e2, a1, a2, vf):
 # 4. Define System Constants and Geometry
 # -------------------------
 # Component Masses (kg)
-m_B_total = 64.8; m_Bf = m_Bm = m_Br = m_B_total / 3
+m_B_total = 32.4; m_Bf = m_Bm = m_Br = m_B_total / 3
 m_ESC = 0.12; m_TS  = 0.9; m_BS  = 0.9
 
 # --- NEW: Mount Properties ---
-m_mount = 0.050 # Mass of the mount (50g)
-C_mount = 900   # Specific Heat of Aluminum (J/kg·K)
-A_mount_conv = 0.01 # Convective surface area of the mount (m^2)
-LC_mount = 0.05     # Characteristic length for mount convection (m)
+m_mount = 0.023 # Mass of the mount (50g)
+C_mount = 800   # Specific Heat of Aluminum (J/kg·K)
+A_mount_conv = 0.0067 # Convective surface area of the mount (m^2)
+LC_mount = 0.0087     # Characteristic length for mount convection (m)
 
 # Component Specific Heat Capacities (J/kg·K)
 C_B   = 1100; C_ESC = 100; C_TS  = 1040; C_BS  = 1040
 
 # Internal Heat Generation (W)
-Q_B_total = 232.8; Q_B_front = Q_B_middle = Q_B_rear = Q_B_total / 3
+Q_B_total = 12.6; Q_B_front = Q_B_middle = Q_B_rear = Q_B_total / 3
 Q_ESC = 100
 Q_S = 0; Q_A = 0; Q_P = 0
 
@@ -82,12 +82,12 @@ A_ESC_conv = 0.01348; A_TS = 0.54168; A_BS = 0.54168
 
 # --- NEW: Updated Conduction Paths for ESC -> Mount -> Battery Front ---
 # We assume aluminum (k=180) for mount conductivity and define interface geometry.
-k_mount = 0.5
+k_mount = 0.4
 # Path 1: From ESC to Mount
-A_contact_ESC_Mount = 0.05; L_path_ESC_Mount = 0.005
+A_contact_ESC_Mount = 0.0012; L_path_ESC_Mount = 0.005
 C_cond_ESC_to_Mount = k_mount * A_contact_ESC_Mount / L_path_ESC_Mount
 # Path 2: From Mount to Battery Front
-A_contact_Mount_Bf = 0.005; L_path_Mount_Bf = 0.005
+A_contact_Mount_Bf = 0.0026; L_path_Mount_Bf = 0.005
 C_cond_Mount_to_Bf = k_mount * A_contact_Mount_Bf / L_path_Mount_Bf
 # NOTE: The direct path C_ESC_Bf_cond is now removed.
 
@@ -98,14 +98,14 @@ k_cfrp = 0.015; A_cfrp = 0.54168; t_cfrp = 0.005; C_cond_cfrp = k_cfrp * A_cfrp 
 C_Bf_TS_int_rad = rad_coeff(0.9, 0.2, 0.0427, 0.54168, 1)
 C_TS_BS_rad     = rad_coeff(0.2, 0.2, 0.54168, 0.54168, 0.5)
 C_ESC_TS_rad    = rad_coeff(0.8, 0.2, 0.0013959, 0.54168, 1)
-C_Bf_ESC_rad    = rad_coeff(0.2, 0.8, 0.038808, 0.00206415, 1)
-C_Mount_rad     = rad_coeff(0.98, 0.2, A_mount_conv, A_TS, 1) # Simplified radiation from mount
+C_Bf_ESC_rad    = rad_coeff(0.9, 0.8, 0.038808, 0.00206415, 1)
+C_Mount_rad     = rad_coeff(0.85, 0.2, A_mount_conv, A_TS, 1) # Simplified radiation from mount
 
 # Characteristic Lengths (m)
 LC_B_horiz = 0.277; LC_B_vert = 0.252; LC_ESC = 0.0695; LC_TS = LC_BS = 0.84
 
 # Environmental Conditions
-g = 9.81; velocity = 0.0; T_E = 298
+g = 9.81; velocity = 0.0; T_E = 228.15
 
 # -------------------------
 # 5. Define Convection Models
@@ -178,7 +178,7 @@ def f(t, x):
     Q_conv_BS_in = natural_convection_h(p_bs_int_film, T_BS_int, T_air, LC_BS, False) * A_BS * (T_air - T_BS_int)
     Q_conv_BS_ext = get_external_surface_h(p_bs_ext_film, T_BS_ext, T_E, LC_BS, velocity) * A_BS * (T_E - T_BS_ext)
     Q_rad_TS = (C_Bf_TS_int_rad * ((T4_Bf - T4_TS_int) + (T4_Bm - T4_TS_int) + (T4_Br - T4_TS_int)) + C_TS_BS_rad * (T4_BS_int - T4_TS_int)) + Q_rad_Mount # Top shell gains radiation from mount
-    Q_rad_BS = (C_Bf_TS_int_rad * ((T4_Bf - T4_BS_int) + (T4_Bm - T4_BS_int) + (T4_Br - T4_BS_int)) + C_TS_BS_rad * (T4_TS_int - T4_BS_int))
+    Q_rad_BS = (C_Bf_TS_int_rad * ((T4_Bf - T4_BS_int) + (T4_Bm - T4_BS_int) + (T4_Br - T4_BS_int)) + C_TS_BS_rad * (T4_TS_int - T4_BS_int)) + Q_rad_Mount
 
     # INTERNAL AIR
     Q_conv_air = -(Q_conv_Bf + Q_conv_Bm + Q_conv_Br + Q_conv_ESC + Q_conv_Mount + Q_conv_TS_in + Q_conv_BS_in)
