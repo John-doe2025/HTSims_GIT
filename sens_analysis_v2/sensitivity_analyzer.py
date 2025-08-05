@@ -14,13 +14,13 @@ from scipy.integrate import solve_ivp
 COLUMN_NAMES = {
     "temp": "Temperature (K)", "rho": "Density (rho) kg/m3",
     "cp": "Specific Heat (cp) J/kg.K", "k": "Thermal Conductivity (k) W/m.K",
-    "mu": "Dynamic Viscosity (m) kg/m.s"
+    "mu": "Dynamic Viscosity (m)  kg/m.s"
 }
 
 # Load air properties ONCE for efficiency
 try:
     path = "./298.xlsx"
-    df_air = pd.read_excel(path)
+    df_air = pd.read_excel(path,sheet_name = 1)
     temperatures = df_air[COLUMN_NAMES["temp"]].tolist()
     rho_values   = df_air[COLUMN_NAMES["rho"]].tolist()
     cp_values    = df_air[COLUMN_NAMES["cp"]].tolist()
