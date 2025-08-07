@@ -43,9 +43,13 @@ C_bulkhead = 1040 # CFRP
 Q_ESC = 100
 
 # --- GEOMETRY: AREAS (m^2) AND LENGTHS (m) ---
+# Radiaiton Areas
+A_rad_batt_to_batt = 0.196 * 0.141
+A_rad_batt_to_shell = 0.196 * 0.32
 # Convective Areas
-A_conv_batt_middle = (2 * L_batt_zone * W_batt_zone) + (L_batt_zone * H_batt_zone) # Top, Bottom, 1 Side
-A_conv_batt_end = A_conv_batt_middle + (W_batt_zone * H_batt_zone) # Middle area + 1 End
+A_conv_batt_side = 2 * (L_batt_zone * H_batt_zone + H_batt_zone * W_batt_zone) # area of all battery sides combined
+A_conv_batt_top = (W_batt_zone * L_batt_zone) # Area of top surface of battery
+A_conv_batt_total = A_conv_batt_top + A_conv_batt_side
 A_ESC_conv = 2 * (0.047 * 0.0695 + 0.047 * 0.0269 + 0.0695 * 0.0269) # Total surface area of ESC
 A_mount_conv = 0.007 # Recalculated for new mount dimensions
 A_bulkhead_face = 0.011 # Area of one face of the "hollow frame"
@@ -77,7 +81,7 @@ A_contact_ESC_Mount = 0.047 * 0.0695 # Full base of ESC
 A_contact_Mount_BH1 = A_contact_ESC_Mount # Mount is flush with bulkhead
 A_contact_Batt_BH = W_batt_zone * H_batt_zone # Face of a battery node
 A_contact_BH_Shell = 1.066 * t_bulkhead # Perimeter of bulkhead * its thickness
-
+A_contact_batt_batt = 0.196 * 0.32
 # --- SURFACE PROPERTIES: EMISSIVITY (Dimensionless) ---
 emis_batt = 0.9; emis_esc = 0.8; emis_mount = 0.8
 emis_shell_int = 0.85; emis_shell_ext = 0.8; emis_bulkhead = 0.85

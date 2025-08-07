@@ -66,7 +66,7 @@ def f(t, x):
     h_conv_esc = physics_models.natural_convection_h(p_esc_film, temps['ESC'], temps['Internal_Air'], config.LC_ESC, False)
     Q_conv_ESC_air = h_conv_esc * config.A_ESC_conv * (temps['ESC'] - temps['Internal_Air'])
     
-    # 3. Radiation (ESC -> Shells)
+    # 3. Radiation (ESC -> Shells)Z
     Q_rad_ESC_to_TS = C_ESC_TS_rad * (T4s['ESC'] - T4s['Top_Shell_Int'])
     Q_rad_ESC_to_BS = C_ESC_BS_rad * (T4s['ESC'] - T4s['Bot_Shell_Int'])
     Q_rad_ESC_net = Q_rad_ESC_to_TS + Q_rad_ESC_to_BS
