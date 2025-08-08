@@ -71,9 +71,14 @@ def f(t, x):
     Q_rad_ESC_to_BS = C_ESC_BS_rad * (T4s['ESC'] - T4s['Bot_Shell_Int'])
     Q_rad_ESC_net = Q_rad_ESC_to_TS + Q_rad_ESC_to_BS
 
+    # Additional radiation paths (ESC -> front batteries)
+    C_ESC_BFTop_rad = physics_models.rad_coeff(config.emis_esc, config.emis_batt, config.A_ESC_conv, config.A_conv_batt_end)
+    C_ESC_BFBot_rad = physics_models.rad_coeff(config.emis_esc, config.emis_batt, config.A_ESC_conv, config.A_conv_batt_end)
+    Q_rad_ESC_to_BFTop = C_ESC_BFTop_rad * (T4s['ESC'] - T4s['Batt_BF_Top'])
+    Q_rad_ESC_to_BFBot = C_ESC_BFBot_rad * (T4s['ESC'] - T4s['Batt_BF_Bot'])
+    Q_rad_ESC_net += (Q_rad_ESC_to_BFTop + Q_rad_ESC_to_BFBot)
+
     # Apply energy balance to the affected nodes
-    # Heat IN to ESC:
-    Q_net['ESC'] += config.Q_ESC
     # Heat OUT from ESC:
     Q_net['ESC'] -= Q_cond_ESC_to_Mount
     Q_net['ESC'] -= Q_conv_ESC_air
@@ -83,6 +88,8 @@ def f(t, x):
     Q_net['Internal_Air'] += Q_conv_ESC_air
     Q_net['Top_Shell_Int'] += Q_rad_ESC_to_TS
     Q_net['Bot_Shell_Int'] += Q_rad_ESC_to_BS
+    Q_net['Batt_BF_Top'] += Q_rad_ESC_to_BFTop
+    Q_net['Batt_BF_Bot'] += Q_rad_ESC_to_BFBot
 
         # --- B. Mount Calculations ---
     # Heat flows INTO the Mount from the ESC, and flows OUT via three paths:
@@ -182,18 +189,8 @@ def f(t, x):
     # and conduct heat to each other.
     
     # --- Conduction Between Battery Nodes (Internal Pack Gradients) ---
-    # 1. Front-to-Middle Conduction
-    Q_cond_BFT_to_BMT = C_cond_Batt_to_BH * (temps['Batt_BF_Top'] - temps['Batt_BM_Top'])
-    Q_cond_BFB_to_BMB = C_cond_Batt_to_BH * (temps['Batt_BF_Bot'] - temps['Batt_BM_Bot'])
-    Q_net['Batt_BF_Top'] -= Q_cond_BFT_to_BMT; Q_net['Batt_BM_Top'] += Q_cond_BFT_to_BMT
-    Q_net['Batt_BF_Bot'] -= Q_cond_BFB_to_BMB; Q_net['Batt_BM_Bot'] += Q_cond_BFB_to_BMB
+    # Not present in the provided matrix; remove axial conduction between battery zones
     
-    # 2. Middle-to-Rear Conduction
-    Q_cond_BMT_to_BRT = C_cond_Batt_to_BH * (temps['Batt_BM_Top'] - temps['Batt_BR_Top'])
-    Q_cond_BMB_to_BRB = C_cond_Batt_to_BH * (temps['Batt_BM_Bot'] - temps['Batt_BR_Bot'])
-    Q_net['Batt_BM_Top'] -= Q_cond_BMT_to_BRT; Q_net['Batt_BR_Top'] += Q_cond_BMT_to_BRT
-    Q_net['Batt_BM_Bot'] -= Q_cond_BMB_to_BRB; Q_net['Batt_BR_Bot'] += Q_cond_BMB_to_BRB
-
     # 3. Top-to-Bottom Conduction
     Q_cond_BFT_to_BFB = C_cond_Batt_Top_Bot * (temps['Batt_BF_Top'] - temps['Batt_BF_Bot'])
     Q_cond_BMT_to_BMB = C_cond_Batt_Top_Bot * (temps['Batt_BM_Top'] - temps['Batt_BM_Bot'])
@@ -222,23 +219,56 @@ def f(t, x):
         A_vert = area - A_horiz
         h_avg = (h_horiz * A_horiz + h_vert * A_vert) / area if area > 0 else 0
         
-        # Convection to Air
+        # Convection to Air (batt -> air): matrix shows conv -ve for batteries, conv +ve for air
         Q_conv_batt_air = h_avg * area * (T_batt - temps['Internal_Air'])
         Q_net[label] -= Q_conv_batt_air
         Q_net['Internal_Air'] += Q_conv_batt_air
 
-        # Radiation to Shells
+        # Radiation to Shells (batt -> shells): matrix shows rad -ve from batt, rad +ve to shells
         C_rad_batt_TS = physics_models.rad_coeff(config.emis_batt, config.emis_shell_int, area, config.A_TS)
         C_rad_batt_BS = physics_models.rad_coeff(config.emis_batt, config.emis_shell_int, area, config.A_BS)
-        Q_rad_batt_net = C_rad_batt_TS * (T4s[label] - T4s['Top_Shell_Int']) + \
-                         C_rad_batt_BS * (T4s[label] - T4s['Bot_Shell_Int'])
-        
-        Q_net[label] -= Q_rad_batt_net
-        Q_net['Top_Shell_Int'] += C_rad_batt_TS * (T4s[label] - T4s['Top_Shell_Int'])
-        Q_net['Bot_Shell_Int'] += C_rad_batt_BS * (T4s[label] - T4s['Bot_Shell_Int'])
+        Q_rad_batt_to_TS = C_rad_batt_TS * (T4s[label] - T4s['Top_Shell_Int'])
+        Q_rad_batt_to_BS = C_rad_batt_BS * (T4s[label] - T4s['Bot_Shell_Int'])
+        Q_net[label] -= (Q_rad_batt_to_TS + Q_rad_batt_to_BS)
+        Q_net['Top_Shell_Int'] += Q_rad_batt_to_TS
+        Q_net['Bot_Shell_Int'] += Q_rad_batt_to_BS
 
+    # --- Additional radiation links from matrix ---
+    # ESC radiates to shells (already implemented)
+    # ESC radiates to BH_1 (matrix: BH_1 gets rad +ve from ESC)
+    C_ESC_BH_rad = physics_models.rad_coeff(config.emis_esc, config.emis_bulkhead, config.A_ESC_conv, config.A_bulkhead_face)
+    Q_rad_ESC_to_BH1 = C_ESC_BH_rad * (T4s['ESC'] - T4s['BH_1'])
+    Q_net['ESC'] -= Q_rad_ESC_to_BH1
+    Q_net['BH_1'] += Q_rad_ESC_to_BH1
 
-        # --- E. Shell and Air Calculations ---
+    # Bulkheads radiate between neighbors as per matrix (BH_i rad +/- with BH_{i+1})
+    for src, dst in [('BH_1','BH_2'), ('BH_2','BH_3'), ('BH_3','BH_4')]:
+        C_BH_pair = physics_models.rad_coeff(config.emis_bulkhead, config.emis_bulkhead, config.A_bulkhead_face, config.A_bulkhead_face)
+        Q_rad_pair = C_BH_pair * (T4s[src] - T4s[dst])
+        Q_net[src] -= Q_rad_pair
+        Q_net[dst] += Q_rad_pair
+
+    # Batteries radiate between adjacent zones (matrix shows rad +/- between BF<->BM and BM<->BR)
+    for src_top, dst_top in [('Batt_BF_Top','Batt_BM_Top'), ('Batt_BM_Top','Batt_BR_Top')]:
+        C_pair = physics_models.rad_coeff(config.emis_batt, config.emis_batt, config.A_rad_batt_to_batt, config.A_rad_batt_to_batt)
+        Q_rad = C_pair * (T4s[src_top] - T4s[dst_top])
+        Q_net[src_top] -= Q_rad
+        Q_net[dst_top] += Q_rad
+    for src_bot, dst_bot in [('Batt_BF_Bot','Batt_BM_Bot'), ('Batt_BM_Bot','Batt_BR_Bot')]:
+        C_pair = physics_models.rad_coeff(config.emis_batt, config.emis_batt, config.A_rad_batt_to_batt, config.A_rad_batt_to_batt)
+        Q_rad = C_pair * (T4s[src_bot] - T4s[dst_bot])
+        Q_net[src_bot] -= Q_rad
+        Q_net[dst_bot] += Q_rad
+
+    # Cross top-bottom radiation between adjacent zones (BF<->BM and BM<->BR)
+    for src, dst in [('Batt_BF_Top','Batt_BM_Bot'), ('Batt_BF_Bot','Batt_BM_Top'), ('Batt_BM_Top','Batt_BR_Bot'), ('Batt_BM_Bot','Batt_BR_Top')]:
+        C_pair = physics_models.rad_coeff(config.emis_batt, config.emis_batt, config.A_rad_batt_to_batt, config.A_rad_batt_to_batt)
+        Q_rad = C_pair * (T4s[src] - T4s[dst])
+        Q_net[src] -= Q_rad
+        Q_net[dst] += Q_rad
+
+    
+    # --- E. Shell and Air Calculations ---
     # This section handles the energy balance for the shell walls and the
     # internal air volume, which receives heat from all other components.
 
@@ -266,11 +296,11 @@ def f(t, x):
     
     # --- External Convection (Shells -> Ambient) ---
     p_ts_ext_film = physics_models.prop_internal_air((temps['Top_Shell_Ext'] + T_E)/2, P_amb)
-    h_conv_TSext = physics_models.get_external_convection_h(p_ts_ext_film, temps['Top_Shell_Ext'], T_E, config.LC_TS_ext, config.LC_TS_int, config.velocity)
+    h_conv_TSext = physics_models.get_external_convection_h(p_ts_ext_film, temps['Top_Shell_Ext'], T_E, config.LC_TS_ext, config.LC_TS_int)
     Q_conv_TSext_amb = h_conv_TSext * config.A_TS * (temps['Top_Shell_Ext'] - T_E)
     
     p_bs_ext_film = physics_models.prop_internal_air((temps['Bot_Shell_Ext'] + T_E)/2, P_amb)
-    h_conv_BSext = physics_models.get_external_convection_h(p_bs_ext_film, temps['Bot_Shell_Ext'], T_E, config.LC_BS_ext, config.LC_BS_int, config.velocity)
+    h_conv_BSext = physics_models.get_external_convection_h(p_bs_ext_film, temps['Bot_Shell_Ext'], T_E, config.LC_BS_ext, config.LC_BS_int)
     Q_conv_BSext_amb = h_conv_BSext * config.A_BS * (temps['Bot_Shell_Ext'] - T_E)
     
     Q_net['Top_Shell_Ext'] -= Q_conv_TSext_amb

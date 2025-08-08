@@ -50,6 +50,9 @@ A_rad_batt_to_shell = 0.196 * 0.32
 A_conv_batt_side = 2 * (L_batt_zone * H_batt_zone + H_batt_zone * W_batt_zone) # area of all battery sides combined
 A_conv_batt_top = (W_batt_zone * L_batt_zone) # Area of top surface of battery
 A_conv_batt_total = A_conv_batt_top + A_conv_batt_side
+# Provide distinct handles for end vs. middle zones (can be tuned later)
+A_conv_batt_end = A_conv_batt_total
+A_conv_batt_middle = A_conv_batt_total
 A_ESC_conv = 2 * (0.047 * 0.0695 + 0.047 * 0.0269 + 0.0695 * 0.0269) # Total surface area of ESC
 A_mount_conv = 0.007 # Recalculated for new mount dimensions
 A_bulkhead_face = 0.011 # Area of one face of the "hollow frame"
