@@ -2,9 +2,9 @@
 
 # --- Simulation Control ---
 TARGET_ALTITUDE_KM = 0.1
-T_total = 86400 * 0.9  # Total simulation time in seconds (e.g., 3 days)
+T_total = 86400 * 15  # Total simulation time in seconds (e.g., 3 days)
 velocity = 0 # Aircraft velocity [m/s]
-initial_temp_K = 287.34 # Initial temperature of all components
+initial_temp_K = 298.15 # Initial temperature of all components
 
 # --- Node Labels (17 Total Nodes) ---
 labels = [
