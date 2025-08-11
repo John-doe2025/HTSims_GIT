@@ -41,16 +41,16 @@ def prop_internal_air(T_internal, P_amb):
     
     return rho, cp, k, mu, nu, Pr
 
-def get_external_convection_h(p_film, T_surface, T_fluid, L_char_forced, L_char_natural):
+def get_external_convection_h(p_film, T_surface, T_fluid, L_char):
     """
     Determines the appropriate external convection coefficient.
     - Uses forced convection if velocity is significant.
     - Falls back to natural convection if velocity is zero or negligible.
     """
     if config.velocity > 0.1:
-        return forced_convection_h(p_film, L_char_forced)
+        return forced_convection_h(p_film, L_char)
     else:
-        return natural_convection_h(p_film, T_surface, T_fluid, L_char_natural, is_vertical=False)
+        return natural_convection_h(p_film, T_surface, T_fluid, L_char, is_vertical=False)
 
 def natural_convection_h(p_film, T_surface, T_fluid, L_char, is_vertical):
     k, Pr, nu_val = p_film[2], p_film[5], p_film[4]

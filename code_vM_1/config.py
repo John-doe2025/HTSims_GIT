@@ -89,3 +89,21 @@ alpha_solar_shell = 0.6
 
 # --- ENVIRONMENT ---
 g = 9.81
+
+'''
+L_path_Mount_to_BH - mount center to BH1
+L_path_BH_to_Shell - basically BH width
+k_eff_batt - k between two battery nodes
+A_contact_Batt_BH - basically the area of contact btw BH and battery
+L_path_Batt_to_BH - length of contact btw  BH and batt
+A_contact_Mount_BH1 - area of contact btw mount and BH
+L_path_Mount_to_BH - length of contact btw mounut and BH eg circumference if circular
+A_contact_BH_Shell -area of BH aorund the shell
+L_path_BH_to_Shell - circumference of BH around shell
+A_TS/A_BS - area of nacelle
+LC_ESC - basically area / perimeter of esc 
+LC_Mount - area / perimeter of mount
+LC_bulkhead - total vertical height
+A_bulkhead_face - vertical area of BH
+
+'''
