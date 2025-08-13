@@ -36,10 +36,10 @@ def calculate_external_heat_loads(t, T_TS_ext, T_BS_ext, T_E):
     Q_albedo_in_BS = current_solar_flux * FLUX_ALBEDO_FRACTION * config.A_BS * config.alpha_solar_shell
 
     # The ground IR radiation is an inflow. We can add it back if needed, but for stability, start with this.
-    # sigma = 5.67e-8
-    # Q_ground_rad_in = sigma * config.A_BS * config.emis_shell_ext * (T_E**4)
+    #sigma = 5.67e-8
+    #Q_ground_rad_in = sigma * config.A_BS * config.emis_shell_ext * (T_E**4)
     
     total_Q_top = Q_solar_in_TS
-    total_Q_bottom = Q_albedo_in_BS # + Q_ground_rad_in
+    total_Q_bottom = Q_albedo_in_BS  #+ Q_ground_rad_in
     
     return {'Q_ext_top': total_Q_top, 'Q_ext_bottom': total_Q_bottom}

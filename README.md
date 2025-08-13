@@ -15,7 +15,7 @@ Github oriented version of HTSims so that version control can be managed
   
   htsims_vM - master version of the code containing the most advanced scripts with everything from v1, v2, v3 and broken into multiple different script for simplicity and further updation
 
-  htsims_vM_1 - editing master version of code from 10 nodes to 17 nodes simulation and config file still incomplete, meant to be the new master version once completed
+  htsims_vM_1 - editing master version of code from 10 nodes to 20 nodes simulation and config file completed checks to be done, meant to be the new master version once completed, facing errors in sign conventions of the equations. solved by consulting to older methods of taking the sign of the concerned body to be negative and adding everything up 
 
 # Sensitivity Analysis
   sens_analysis - trying to do a sensitivity analysis on the code pref v2 to check what all variables affect the final result the most when perturbed 
