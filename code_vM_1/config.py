@@ -1,11 +1,11 @@
 # config.py
 # --- Simulation Control ---
 TARGET_ALTITUDE_KM = 0.1
-T_total = 86400 * 30  # Total simulation time in seconds (e.g., 3 days)
+T_total = 86400 * 3  # Total simulation time in seconds (e.g., 3 days)
 velocity = 0 # Aircraft velocity [m/s]
-initial_temp_K = 298.15 # Initial temperature of all components
+initial_temp_K = 287.34 # Initial temperature of all components
 
-# --- Node Labels (17 Total Nodes) ---
+# --- Node Labels (20 Total Nodes) ---
 labels = [
     # 6 Battery Nodes
     'Batt_BF_Top', 'Batt_BF_Bot', 'Batt_BM_Top', 'Batt_BM_Bot', 'Batt_BR_Top', 'Batt_BR_Bot',
@@ -14,11 +14,11 @@ labels = [
     # 4 Bulkhead Nodes
     'BH_1', 'BH_2', 'BH_3', 'BH_4',
     #Plates
-    'plateT', 'plateM', 'plateB'
+    'plateT', 'plateM', 'plateB',
     # 4 Shell Nodes
     'Top_Shell_Int', 'Top_Shell_Ext', 'Bot_Shell_Int', 'Bot_Shell_Ext',
     # 1 Air Node
-    'Internal_Air'
+    'Internal_air'
 ]
 
 # --- BATTERY ZONE PROPERTIES (Based on 6 zones of 4 cells each) ---
@@ -88,7 +88,7 @@ LC_TS_int = 0.211; LC_BS_int = 0.211; LC_TS_ext = 1.010; LC_BS_ext = 1.010
 # --- MATERIAL PROPERTIES: THERMAL CONDUCTIVITY (W/m·K) ---
 k_eff_batt = 0.5   # Effective conductivity within a 4-cell zone (low due to air gaps)
 k_cfrp = 1.0     # Shell material
-k_mount = 180.0    # Mount material (Aluminum 6061)
+k_mount = 10.0    # Mount material (Aluminum 6061)
 k_bulkhead = 1.0   # Bulkhead material (CFRP)
 
 # --- INTERFACE GEOMETRY ---

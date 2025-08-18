@@ -48,7 +48,7 @@ def plot_grouped_results(sol):
     # Define the groups of components for subplots
     groups = {
         'Batteries': [l for l in config.labels if 'Batt_' in l],
-        'Avionics & Air': ['ESC', 'ESC_Mount', 'Internal_Air'],
+        'Avionics & Air': ['ESC', 'ESC_Mount', 'Internal_air'],
         'Bulkheads': [l for l in config.labels if 'BH_' in l],
         'Shells': [l for l in config.labels if 'Shell' in l]
     }

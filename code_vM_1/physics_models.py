@@ -53,32 +53,61 @@ def get_external_convection_h(p_film, T_surface, T_fluid, L_char):
         return natural_convection_h(p_film, T_surface, T_fluid, L_char, is_vertical=False)
 
 def natural_convection_h(p_film, T_surface, T_fluid, L_char, is_vertical):
+    # Unpack the fluid properties from the tuple
     k, Pr, nu_val = p_film[2], p_film[5], p_film[4]
-    if abs(T_surface - T_fluid) < 1e-4 or not all([Pr, nu_val, k]) or Pr <= 0:
+
+    # --- SAFEGUARDS ---
+    # If the temperature difference is negligible or fluid properties are invalid,
+    # there is no natural convection. Return h = 0.
+    if abs(T_surface - T_fluid) < 1e-6 or not all([Pr, nu_val, k]) or Pr <= 0:
         return 0.0
-    
+
+    # --- CALCULATIONS ---
+    # Calculate properties at the film temperature
     T_film = (T_surface + T_fluid) / 2
     beta = 1.0 / T_film if T_film > 1e-6 else 0
 
+    # Calculate Grashof and Rayleigh numbers
+    # Added a small epsilon to the denominator to prevent division by zero if nu_val is exactly 0
     Gr = (config.g * beta * abs(T_surface - T_fluid) * L_char**3) / (nu_val**2 + 1e-12)
     Ra = Gr * Pr
 
-    if Ra < 0: return 0.0
-    
+    # Safeguard against negative Rayleigh number from potential floating point errors
+    if Ra < 0:
+        return 0.0
+
+    # Set a safe, physically reasonable default for the Nusselt number.
+    # Nu=1 implies pure conduction through the fluid layer.
     Nu = 1.0
+
+    # --- NUSSELT NUMBER CORRELATIONS ---
     try:
         if is_vertical:
+            # Churchill and Chu correlation for vertical plates, valid for all Ra
             Nu = (0.825 + (0.387 * Ra**(1/6)) / (1 + (0.492 / Pr)**(9/16))**(8/27))**2
-        else: # Horizontal plate
-            if T_surface > T_fluid: # Hot surface facing up
-                if 1e4 <= Ra <= 1e7: Nu = 0.54 * Ra**(1/4)
-                elif Ra > 1e7: Nu = 0.15 * Ra**(1/3)
-            else: # Hot surface facing down
-                if 1e5 <= Ra <= 1e10: Nu = 0.27 * Ra**(1/4)
+        else:  # Horizontal plate
+            if T_surface > T_fluid:  # Hot surface facing up (cooling from below)
+                if 1e4 <= Ra <= 1e7:
+                    Nu = 0.54 * Ra**(1/4)  # Laminar
+                elif Ra > 1e7:
+                    Nu = 0.15 * Ra**(1/3)  # Turbulent
+                # If Ra < 1e4, Nu remains the default value of 1.0
+            else:  # Cold surface facing up (cooling from above)
+                if 1e5 <= Ra <= 1e10:
+                    Nu = 0.27 * Ra**(1/4)
+                # If Ra < 1e5, Nu remains the default value of 1.0
+
     except (ValueError, OverflowError):
-        Nu = 1.0 # Fallback on math error
-        
-    return Nu * k / L_char
+        # If any math error occurs (e.g., power of a negative number),
+        # fall back to the safe default Nusselt number.
+        Nu = 1.0
+
+    # --- FINAL CALCULATION ---
+    # Calculate h AFTER the Nusselt number has been determined. This line will now always execute.
+    h = Nu * k / L_char
+
+    # The result h should always be positive, so abs() is no longer needed.
+    return h
 
 def forced_convection_h(p_film, L_char):
     rho, mu, k, Pr = p_film[0], p_film[3], p_film[2], p_film[5]
