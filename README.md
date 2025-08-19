@@ -16,6 +16,8 @@ Github oriented version of HTSims so that version control can be managed
   htsims_vM - master version of the code containing the most advanced scripts with everything from v1, v2, v3 and broken into multiple different script for simplicity and further updation
 
   htsims_vM_1 - editing master version of code from 10 nodes to 20 nodes simulation and config file completed checks to be done, meant to be the new master version once completed, facing errors in sign conventions of the equations. solved by consulting to older methods of taking the sign of the concerned body to be negative and adding everything up 
+  
+  recent updates - fixed the convention but internal air is causing issues due to its low volume which is still not fixed, a go to solution for now is to use initial temp closer or pref +25 higer than the ambient temp to avoid solver issues other than that things work fine a sanity checklist is left after which it can be merged into a singular file with proper comments and start further development  
 
 # Sensitivity Analysis
   sens_analysis - trying to do a sensitivity analysis on the code pref v2 to check what all variables affect the final result the most when perturbed 
