@@ -49,7 +49,7 @@ def plot_grouped_results(sol):
     groups = {
         'Batteries': [l for l in config.labels if 'Batt_' in l],
         'Avionics & Air': ['ESC', 'ESC_Mount', 'Internal_air'],
-        'Bulkheads': [l for l in config.labels if 'BH_' in l],
+        'Bulkheads & Plates': [l for l in config.labels if 'BH_' in l] + [l for l in config.labels if 'plate' in l],
         'Shells': [l for l in config.labels if 'Shell' in l]
     }
     

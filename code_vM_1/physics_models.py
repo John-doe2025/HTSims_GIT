@@ -113,8 +113,23 @@ def forced_convection_h(p_film, L_char):
     rho, mu, k, Pr = p_film[0], p_film[3], p_film[2], p_film[5]
     if not all([Pr, k]) or Pr <= 0: return 0.0
     
-    Re_L = rho * config.velocity * L_char / max(mu, 1e-12)
-    if Re_L < 100: return 0.0
+    # Enhanced safety check for extremely low density (high altitude)
+    if rho < 1e-6:  # Very thin air
+        return 0.0
+    
+    # Additional safety checks for extreme conditions
+    if mu < 1e-12 or k < 1e-12:
+        return 0.0
+    
+    # Calculate Reynolds number with enhanced stability
+    Re_L = rho * config.velocity * L_char / mu
+    
+    # More conservative Reynolds number limits for high altitude
+    if Re_L < 100: 
+        return 0.0
+    
+    # Cap Reynolds number more aggressively to prevent extreme values
+    Re_L = min(Re_L, 1e6)  # Reduced from 1e8
     
     Re_crit = 5e5
     try:
@@ -122,10 +137,17 @@ def forced_convection_h(p_film, L_char):
             Nu = 0.664 * (Re_L**0.5) * (Pr**(1/3))
         else: # Mixed
             Nu = (0.037 * (Re_L**0.8) - 871) * (Pr**(1/3))
+            # Ensure Nu is positive for mixed flow
+            Nu = max(Nu, 1.0)
     except (ValueError, OverflowError):
         Nu = 1.0 # Fallback
-        
-    return Nu * k / L_char
+    
+    # Calculate h with enhanced bounds checking
+    h = Nu * k / L_char
+    
+    # More conservative cap for high altitude conditions
+    max_h = 50.0 if rho < 0.1 else 200.0  # Lower cap for thin air
+    return min(h, max_h)
 
 # --- ADDED: Helper function for radiation calculations ---
 def T_power4(T):

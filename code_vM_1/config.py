@@ -1,9 +1,9 @@
 # config.py
 # --- Simulation Control ---
 TARGET_ALTITUDE_KM = 0.1
-T_total = 86400 * 3  # Total simulation time in seconds (e.g., 3 days)
+T_total = 86400 * 14  # Total simulation time in seconds (e.g., 3 days)
 velocity = 0 # Aircraft velocity [m/s]
-initial_temp_K = 287.34 # Initial temperature of all components
+initial_temp_K = 305.0 # Initial temperature closer to ambient to reduce thermal shock
 
 # --- Node Labels (20 Total Nodes) ---
 labels = [
@@ -73,7 +73,7 @@ A_mount_conv = 0.1545 * 0.3492 # Recalculated for new mount dimensions
 A_bulkhead_face = 0.034 # Area of one face of the bulkhead
 A_Plate =0.3 
 A_TS = 0.542; A_BS = 0.542 # to be finalised still
-V_internal_air = 0.11 # to be finalised still
+V_internal_air = 0.5 # Increased thermal mass to prevent instability
 
 # Characteristic Lengths
 LC_batt_horiz = (L_batt_zone * W_batt_zone) / (2 * (L_batt_zone + W_batt_zone))
@@ -116,8 +116,3 @@ alpha_solar_shell = 0.6
 
 # --- ENVIRONMENT ---
 g = 9.81
-
-'''
-k_eff_batt - k between two battery nodes
-A_TS/A_BS - area of nacelle
-'''
