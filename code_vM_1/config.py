@@ -90,6 +90,7 @@ k_eff_batt = 0.5   # Effective conductivity within a 4-cell zone (low due to air
 k_cfrp = 1.0     # Shell material
 k_mount = 10.0    # Mount material (Aluminum 6061)
 k_bulkhead = 1.0   # Bulkhead material (CFRP)
+k_plate = 1.0
 
 # --- INTERFACE GEOMETRY ---
 # Path lengths (thicknesses)
@@ -108,7 +109,7 @@ A_contact_bh_plate = 0.002 * 0.003
 emis_batt = 0.9
 emis_esc = 0.8
 emis_mount = 0.8
-emis_shell_int = 0.85
+emis_shell_int = 0.75
 emis_shell_ext = 0.8
 emis_bulkhead = 0.85
 emis_plate = 0.85
