@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import config
 
-ENABLE_EXTERNAL_RADIATION = True
+ENABLE_EXTERNAL_RADIATION = False
 SIMULATION_START_HOUR = 8.0
 FLUX_ALBEDO_FRACTION = 0.3
 FLUX_PLANETARY = 237.0

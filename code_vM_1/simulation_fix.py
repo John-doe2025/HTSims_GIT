@@ -25,7 +25,7 @@ print("Calculating thermal coefficients...")
 #Conduction Constants
 C_cond_ESC_to_Mount = config.k_mount*config.A_contact_ESC_Mount/config.L_path_ESC_Mount
 C_cond_Mount_to_BH1 = config.k_bulkhead*config.A_contact_Mount_BH1/config.t_bulkhead
-C_cond_Batt_plate =  config.k_cfrp*config.A_contact_batt_plate/config.t_plate
+C_cond_Batt_plate =  config.k_plate*config.A_contact_batt_plate/config.t_plate
 C_cond_bh_plate = 2 * config.k_bulkhead*config.A_contact_bh_plate/config.L_bh_plate_cond
 C_cond_BH_TS = config.k_cfrp*config.A_contact_BH_Shell/config.t_cfrp
 C_cond_BH_BS = config.k_cfrp*config.A_contact_BH_Shell/config.t_cfrp
