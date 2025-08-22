@@ -1,0 +1,8 @@
+Category,priority,issue,recommendation,expected_benefit
+critical_actions,HIGH,ESC overheating at 116.9°C,Add dedicated cooling for ESC - consider heat sink or forced convection,Reduce temperature by 20-40°C
+thermal_management,MEDIUM,High thermal resistance between ESC_Mount and Bot_Shell_Int (457434354.91 K/W),Improve thermal interface - increase contact area or use thermal interface material,Reduce thermal resistance by 50-70%
+thermal_management,MEDIUM,High thermal resistance between ESC and Top_Shell_Int (2361102116.04 K/W),Improve thermal interface - increase contact area or use thermal interface material,Reduce thermal resistance by 50-70%
+thermal_management,MEDIUM,High thermal resistance between Batt_BF_Top and ESC (2383200759.12 K/W),Improve thermal interface - increase contact area or use thermal interface material,Reduce thermal resistance by 50-70%
+thermal_management,HIGH,ESC generating 294.4W,Implement heat spreading from ESC - add thermal spreader or heat pipe,Distribute heat load and reduce peak temperatures
+thermal_management,HIGH,Batt_BF_Top generating 204.2W,Implement heat spreading from Batt_BF_Top - add thermal spreader or heat pipe,Distribute heat load and reduce peak temperatures
+material_optimization,LOW,Conduction path ESC_Mount → BH_1 has resistance 8.00 K/W,Consider higher thermal conductivity material or larger cross-section,Reduce conduction resistance by 30-50%

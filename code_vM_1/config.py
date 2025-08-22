@@ -1,10 +1,10 @@
 # config.py
 # --- Simulation Control ---
 TARGET_ALTITUDE_KM = 0.1
-T_total = 86400 * 14  # Total simulation time in seconds (e.g., 3 days)
-velocity = 0 # Aircraft velocity [m/s]
+T_total = 86400 * 30  # Total simulation time in seconds (e.g., 3 days)
+velocity = 8 # Aircraft velocity [m/s]
 internal_air_velocity = 0 # Internal air circulation velocity [m/s] - typical for cooling fans
-initial_temp_K = 305.0 # Initial temperature closer to ambient to reduce thermal shock
+initial_temp_K = 305 # Initial temperature closer to ambient to reduce thermal shock
 
 # --- Node Labels (20 Total Nodes) ---
 labels = [
@@ -88,14 +88,14 @@ LC_TS_int = 0.211; LC_BS_int = 0.211; LC_TS_ext = 1.010; LC_BS_ext = 1.010
 
 # --- MATERIAL PROPERTIES: THERMAL CONDUCTIVITY (W/m·K) ---
 k_eff_batt = 0.5   # Effective conductivity within a 4-cell zone (low due to air gaps)
-k_cfrp = 1.0     # Shell material
+k_cfrp = 0.003     # Shell material
 k_mount = 10.0    # Mount material (Aluminum 6061)
 k_bulkhead = 1.0   # Bulkhead material (CFRP)
 k_plate = 1.0
 
 # --- INTERFACE GEOMETRY ---
 # Path lengths (thicknesses)
-t_cfrp = 0.0005
+t_cfrp = 0.005
 t_bulkhead = 0.002
 t_plate = 0.003
 L_path_ESC_Mount = 0.005 # Thickness of mount
@@ -110,7 +110,7 @@ A_contact_bh_plate = 0.002 * 0.003
 emis_batt = 0.9
 emis_esc = 0.8
 emis_mount = 0.8
-emis_shell_int = 0.75
+emis_shell_int = 0.4
 emis_shell_ext = 0.8
 emis_bulkhead = 0.85
 emis_plate = 0.85
