@@ -59,12 +59,21 @@ def f(t, x):
     T4s={k:physics_models.T_power4(v) for k,v in temps.items()}
     p_air = physics_models.prop_internal_air(temps['Internal_air'], P_amb)
     ext_loads=environment_model.calculate_external_heat_loads(t,temps['Top_Shell_Ext'],temps['Bot_Shell_Ext'], T_E)
-    def get_h(T_s,LC,is_v): 
+    def get_h(T_s, LC, is_v): 
         # Use stable film properties to prevent instability
         T_film = (T_s + temps['Internal_air']) / 2
         T_film = max(min(T_film, 500.0), 200.0)  # Clamp film temperature
         p_film = physics_models.prop_internal_air(T_film, P_amb)
-        h = physics_models.natural_convection_h(p_film, T_s, temps['Internal_air'], LC, is_v)
+        
+        # Choose between natural and forced convection based on internal air velocity
+        if config.internal_air_velocity > 0:
+            h_forced = physics_models.internal_forced_convection_h(p_film, LC, config.internal_air_velocity)
+            h_natural = physics_models.natural_convection_h(p_film, T_s, temps['Internal_air'], LC, is_v)
+            # Use the higher of the two (forced convection typically dominates when present)
+            h = max(h_forced, h_natural)
+        else:
+            h = physics_models.natural_convection_h(p_film, T_s, temps['Internal_air'], LC, is_v)
+        
         return min(h, 100.0)  # Cap convection coefficient
 
     #BFT

@@ -3,6 +3,7 @@
 TARGET_ALTITUDE_KM = 0.1
 T_total = 86400 * 14  # Total simulation time in seconds (e.g., 3 days)
 velocity = 0 # Aircraft velocity [m/s]
+internal_air_velocity = 0 # Internal air circulation velocity [m/s] - typical for cooling fans
 initial_temp_K = 305.0 # Initial temperature closer to ambient to reduce thermal shock
 
 # --- Node Labels (20 Total Nodes) ---

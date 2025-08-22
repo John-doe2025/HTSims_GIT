@@ -1,0 +1,3 @@
+From_Node,To_Node,Heat_Flow_W,Direction,Magnitude_W
+ESC,ESC_Mount,-489.975,FROM,489.975
+ESC_Mount,ESC,489.975,TO,489.975

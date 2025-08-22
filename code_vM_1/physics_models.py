@@ -149,6 +149,56 @@ def forced_convection_h(p_film, L_char):
     max_h = 50.0 if rho < 0.1 else 200.0  # Lower cap for thin air
     return min(h, max_h)
 
+def internal_forced_convection_h(p_film, L_char, internal_velocity):
+    """
+    Calculate forced convection heat transfer coefficient for internal air circulation.
+    Similar to external forced convection but optimized for internal flow conditions.
+    
+    Args:
+        p_film: Film properties [rho, cp, k, mu, beta, Pr]
+        L_char: Characteristic length [m]
+        internal_velocity: Internal air velocity [m/s]
+    
+    Returns:
+        h: Heat transfer coefficient [W/m²·K]
+    """
+    rho, mu, k, Pr = p_film[0], p_film[3], p_film[2], p_film[5]
+    
+    # Safety checks
+    if not all([Pr, k]) or Pr <= 0: 
+        return 0.0
+    if rho < 1e-6 or mu < 1e-12 or k < 1e-12:
+        return 0.0
+    if internal_velocity <= 0:
+        return 0.0  # Fall back to natural convection if no internal flow
+    
+    # Calculate Reynolds number for internal flow
+    Re_L = rho * internal_velocity * L_char / mu
+    
+    # Lower threshold for internal flow (more sensitive to low velocities)
+    if Re_L < 10:  # Lower than external (100) for internal sensitivity
+        return 0.0
+    
+    # Cap Reynolds number for stability
+    Re_L = min(Re_L, 5e5)  # More conservative for internal flow
+    
+    # Internal flow correlations (typically lower than external)
+    Re_crit = 2e5  # Lower transition for internal flow
+    try:
+        if Re_L <= Re_crit:  # Laminar internal flow
+            Nu = 0.5 * (Re_L**0.5) * (Pr**(1/3))  # Reduced coefficient for internal
+        else:  # Turbulent internal flow
+            Nu = 0.025 * (Re_L**0.8) * (Pr**(1/3))  # Reduced coefficient for internal
+            Nu = max(Nu, 1.0)
+    except (ValueError, OverflowError):
+        Nu = 1.0
+    
+    h = Nu * k / L_char
+    
+    # More conservative limits for internal flow
+    max_h = 25.0 if rho < 0.1 else 100.0  # Lower than external limits
+    return min(h, max_h)
+
 # --- ADDED: Helper function for radiation calculations ---
 def T_power4(T):
     """Safely computes T^4 for radiation calculations."""
